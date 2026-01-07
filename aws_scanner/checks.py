@@ -1,10 +1,14 @@
 import boto3
+import json
 from botocore.exceptions import ClientError
+from mypy_boto3_s3.client import S3Client
+from mypy_boto3_iam.client import IAMClient
+from mypy_boto3_ec2.client import EC2Client
 
 from .logger import aws_logger
 from .config import SENSITIVE_PORTS
 
-def check_s3_public_access(s3_client) -> list[dict]:
+def check_s3_public_access(s3_client: S3Client) -> list[dict]:
     """
     Checks S3 buckets for public access configurations.
     """
@@ -65,7 +69,7 @@ def check_s3_public_access(s3_client) -> list[dict]:
         aws_logger.error(f"[ERROR] S3: Could not list buckets: {e}")
     return findings
 
-def check_s3_encryption(s3_client) -> list[dict]:
+def check_s3_encryption(s3_client: S3Client) -> list[dict]:
     """
     Checks S3 buckets for server-side encryption configuration.
     """
@@ -92,7 +96,7 @@ def check_s3_encryption(s3_client) -> list[dict]:
         aws_logger.error(f"[ERROR] S3: Could not list buckets: {e}")
     return findings
 
-def check_iam_mfa(iam_client) -> list[dict]:
+def check_iam_mfa(iam_client: IAMClient) -> list[dict]:
     """
     Checks IAM users for MFA (Multi-Factor Authentication) status.
     """
@@ -115,7 +119,7 @@ def check_iam_mfa(iam_client) -> list[dict]:
         aws_logger.error(f"[ERROR] IAM: Could not list users or MFA devices: {e}")
     return findings
 
-def check_security_groups_unrestricted_access(ec2_client) -> list[dict]:
+def check_security_groups_unrestricted_access(ec2_client: EC2Client) -> list[dict]:
     """
     Checks Security Groups for unrestricted inbound access (0.0.0.0/0) on sensitive ports.
     """
